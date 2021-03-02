@@ -1,0 +1,13 @@
+micronaut:
+  application:
+    name: user-app
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedMethods:
+            - GET
+            - DELETE
+            - POST
+            - PUT

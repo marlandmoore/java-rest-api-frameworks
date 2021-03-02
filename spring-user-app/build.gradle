@@ -1,0 +1,23 @@
+apply plugin: 'application'
+
+version = '1.0'
+description = "WebFluxApplication"
+
+application {
+	mainClassName = 'com.app.WebFluxApplication'
+}
+
+repositories {
+	mavenCentral()   	   
+}
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.4.2', ext: 'pom'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.4.2'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.4.2'
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+	
+}
