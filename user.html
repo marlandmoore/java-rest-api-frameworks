@@ -1,0 +1,167 @@
+<html>
+	<head>
+		<script>
+			
+			function fetchUsers(){
+				fetch("http://localhost:8080/user/users")
+					.then(x => x.text())
+					.then(y => displayList(y));
+			}
+			
+			function fetchUser(id){
+				fetch("http://localhost:8080/user/"+id)
+					.then(x => x.text())
+					.then(y => displayEditUser(y));
+			}
+			function fetchUserDelete(id){
+				fetch("http://localhost:8080/user/"+id)
+					.then(x => x.text())
+					.then(y => displayDeleteUser(y));
+			}
+			
+			function displayList(listData){
+				
+				var html = "";
+				var editButton = "<input type='button' value='edit' onclick='editUser()'/>";
+				var deleteButton = "<input type='button' value='delete' onclick='deleteUser(id)'/>";
+				var userArrayList = JSON.parse(listData);
+				for(var i=0; i<userArrayList.length; i++){
+					var user = userArrayList[i];
+					html=html+"<p> <label>Name:</label> "+user.firstname+" "+user.lastname+" | <label>Email:</label> "+user.email+
+					" | <input type='button' value='edit' onclick='fetchUser("+user.user_id+")'/> - "+
+					"<input type='button' value='delete' onclick='fetchUserDelete("+user.user_id+")'/></p>";
+					console.log(user.firstname+":"+user.lastname+":"+user.email);
+				}
+				
+				document.getElementById("list").innerHTML=html;
+				
+			}
+			
+			function displayEditUser(userData){
+				var user = JSON.parse(userData);
+				document.getElementById("user").style.display="block";
+			
+				document.getElementById("user_id").value=user.user_id;
+				document.getElementById("firstname").value=user.firstname;
+				document.getElementById("lastname").value=user.lastname;
+				document.getElementById("email").value=user.email;
+				document.getElementById("user_button").value="Submit";
+				document.getElementById("user_button").addEventListener("click", editUser);
+			}
+			
+			function editUser(){
+				var form = document.getElementById("user_form");
+				fetch("http://localhost:8080/user/update", {
+					method: 'put',
+					headers: {
+						"Content-type": "application/json"
+					},
+					body: '{"user_id":'+form.user_id.value+',"firstname":"'+form.firstname.value+'","lastname":"'+form.lastname.value+'","email":"'+form.email.value+'"}'
+				})
+				.then(x => x.text())
+				.then( function (x) {
+					console.log("RESULT: "+x);
+					document.getElementById("user").style.display="none";
+					fetchUsers();
+				})
+			  .catch(function (error) {
+				console.log('Request failed', error);
+			  });
+			}
+			
+			function displayCreateUser(){
+				document.getElementById("user").style.display="block";
+				document.getElementById("user_button").value="Submit";
+				document.getElementById("user_button").addEventListener("click", createUser);
+			}
+						
+			function createUser(){
+				var form = document.getElementById("user_form");
+				fetch("http://localhost:8080/user/create", {
+					method: 'post',
+					headers: {
+						"Content-type": "application/json"
+					},
+					body: '{"user_id":0, "firstname":"'+form.firstname.value+'","lastname":"'+form.lastname.value+'","email":"'+form.email.value+'"}'
+				})
+				.then(x => x.text())
+				.then(function (x) {
+					console.log("RESULT: "+x);
+					document.getElementById("user").style.display="none";
+					fetchUsers();
+				})
+			  .catch(function (error) {
+				console.log('Request failed', error);
+			  });
+			}
+			
+			
+			function displayDeleteUser(userData){
+				var user = JSON.parse(userData);
+				document.getElementById("delete_user").style.display="block";
+				
+				document.getElementById("delete_user_id").value=user.user_id;
+				document.getElementById("delete_username").innerHTML=user.firstname+" "+user.lastname;
+				document.getElementById("delete_user_button").addEventListener("click", deleteUser);
+			
+			}
+			
+			function deleteUser(){
+				var user_id = document.getElementById("delete_user_id").value;
+				fetch("http://localhost:8080/user/"+user_id+"/delete", {
+					method: 'delete'
+				})
+				.then(x => x.text())
+				.then( function (x) {
+					console.log("RESULT: "+x);
+					document.getElementById("delete_user").style.display="none";
+					fetchUsers();
+				})
+			  .catch(function (error) {
+				console.log('Request failed', error);
+			  });
+			}
+		</script>
+	</head>
+	<body onload="fetchUsers()">
+		<div id="list"></div>
+		<input type="button" onclick="location.reload()" value="refresh"/> 
+		<input type="button" onclick="displayCreateUser()" value="create user"/> 
+		
+		<div id="user" style="display:none" >
+			<form id="user_form" name="form" >
+				<input type="hidden" id="user_id" name="user_id"/>
+				
+				<p>
+				<label>First Name</label>
+				<input id="firstname" name="firstname" type="text"/>
+				</p>
+				
+				<p>
+				<label>Last Name</label>
+				<input id="lastname" name="lastname" type="text"/>
+				</p>
+				
+				<p>
+				<label>Email</label>
+				<input id="email" name="email" type="text"/>
+				</p>
+				
+				<input id="user_button" type="button" value="Submit"/>
+			</form>
+			
+		</div>
+		
+		<div id="delete_user" style="display:none" >
+			<form id="delete_user_form" name="form" >
+				<input type="hidden" id="delete_user_id" name="delete_user_id"/>
+				
+					Delete user: <div id="delete_username"></div>
+				<br/>
+				
+				
+			</form>
+				<input id="delete_user_button" type="button" value="Submit"/>
+		</div>
+	</body>
+</html>	
