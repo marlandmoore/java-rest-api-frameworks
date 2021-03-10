@@ -1,0 +1,11 @@
+docker build -t app . 
+docker run -d -p 8080:8080 --name app app
+
+
+docker volume create postgres-data
+docker build -t postgres . 
+docker run --name postgres -d -p 5432:5432  -v ./postgres-data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=passw0rd postgres
+docker run -it --rm --link postgres psql
+
+
+docker run --name some-postgres -e POSTGRES_PASSWORD=passw0rd -d postgres -p 5432:5432
