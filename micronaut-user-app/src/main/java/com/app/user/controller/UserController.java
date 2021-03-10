@@ -14,6 +14,7 @@ import io.micronaut.http.annotation.Put;
 import io.micronaut.retry.annotation.CircuitBreaker;
 
 @Controller("/user")
+@CircuitBreaker(attempts = "5")
 public class UserController {
 
     private UserDAO userDao = new UserDAO();
@@ -25,7 +26,6 @@ public class UserController {
     }
 
     @Get("/users")
-    @CircuitBreaker(attempts = "5")
     public List<User> getUsers() {
         return userDao.getUsers();
     }

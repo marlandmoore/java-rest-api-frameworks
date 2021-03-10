@@ -1,4 +1,4 @@
-package com.app.dao;
+package com.app.user.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.app.model.User;
+import com.app.user.model.User;
 
 public class UserDAO {
 
@@ -103,5 +103,56 @@ public class UserDAO {
         }
 
         return list;
+    }
+
+    public void updateUser(User user) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        String sql = "update users set firstname=?, lastname=?, email=? where user_id=?";
+        try {
+            con = getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, user.getFirstname());
+            ps.setString(2, user.getLastname());
+            ps.setString(3, user.getEmail());
+            ps.setInt(4, user.getUser_id());
+            ps.execute();
+        } finally {
+            try {
+                ps.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteUser(Integer userId) throws SQLException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        String sql = "delete from users where user_id=?";
+        try {
+            con = getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.execute();
+        } finally {
+            try {
+                ps.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

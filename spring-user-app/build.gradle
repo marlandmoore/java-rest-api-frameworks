@@ -1,10 +1,10 @@
 apply plugin: 'application'
 
 version = '1.0'
-description = "WebFluxApplication"
+description = "Application"
 
 application {
-	mainClassName = 'com.app.WebFluxApplication'
+	mainClassName = 'com.app.Application'
 }
 
 repositories {
